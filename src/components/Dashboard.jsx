@@ -1,13 +1,12 @@
 import { MdOutlineDashboard } from "react-icons/md";
-import version from "../assets/version.png";
 import { CiShoppingCart } from "react-icons/ci";
 import { FaDollarSign } from "react-icons/fa";
 import { RxAvatar } from "react-icons/rx";
 import { FaFileAlt } from "react-icons/fa";
 import { CiImport } from "react-icons/ci";
 import { CiExport } from "react-icons/ci";
-import { GoPencil } from "react-icons/go";
 import { useEffect, useState } from "react";
+import CustomerTable from "./CustomerTable";
 
 const Dashboard=()=>{
     const [isOpen,setIsOpen]=useState(false)
@@ -95,37 +94,7 @@ const Dashboard=()=>{
                 </div>
             </div>
             <div className="flex flex-col justify-start items-start w-[100%]">
-                <table border={1} className="w-full table-auto border">
-                    <tr>
-                        <th className="text-left"><input type="checkbox" /></th>
-                        <th className="text-left">CUSTOMER NAME</th>
-                        <th className="text-left">COMPANY</th>
-                        <th className="text-left">ORDER VALUE</th>
-                        <th className="text-left">ORDER DATE</th>
-                        <th>STATUS</th>
-                        <th></th>
-                    </tr>
-                    <tr>
-                    <th><input type="checkbox" /></th>
-                        <td>
-                            <div className="flex items-center justify-start gap-2">
-                                <img src={version} width={50} height={50} className="rounded-[100%]"/>
-                                <p className="font-bold text-lg">Eliz</p>
-                            </div>
-                        </td>
-                        <td className="text-left">AvatarSystems</td>
-                        <td className="text-left">$539</td>
-                        <td className="text-left">10/07/2024</td>
-                        <td>
-                            <div className="p-1 flex items-center justify-center rounded-md text-green-400 bg-green-200">
-                                New
-                            </div>
-                        </td>
-                        <td>
-                            <button className="bg-white border-0"><GoPencil size={20}/></button>
-                        </td>
-                    </tr>
-                </table>
+                    <CustomerTable/>
             </div>
             <div className="flex justify-between items-center w-full">
                 <p>63 results</p>
