@@ -7,10 +7,22 @@ import { FaFileAlt } from "react-icons/fa";
 import { CiImport } from "react-icons/ci";
 import { CiExport } from "react-icons/ci";
 import { GoPencil } from "react-icons/go";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Dashboard=()=>{
-    const [isOpen,setIsOpen]=useState(false);
+    const [isOpen,setIsOpen]=useState(false)
+    const [overviewData,setOverviewData]=useState([{money:null,change:null},{money:null,change:null},{money:null,change:null}])
+    useEffect(()=>{
+        fetch('https://67fb62ab8ee14a542629e092.mockapi.io/stats')
+        .then((res)=> res.json())
+        .then((data)=>{
+            setOverviewData(data)
+        })
+        .catch(err=>{
+            console.log('lỗi khi fetch overview:',err);
+        })
+    },[])
+
     return(
         <div className="bg-white flex flex-col items-start justify-start gap-5 p-9 border h-full w-full">
             <div className="flex gap-3 justify-start items-center">
@@ -21,9 +33,9 @@ const Dashboard=()=>{
                 <div className="flex justify-between items-start p-3 rounded-md bg-pink-300 min-w-[30%]">
                     <div className="flex flex-col gap-4 items-start justify-start">
                         <p className="font-bold">Turnover</p>
-                        <p className="font-bold text-[40px]">$92,405</p>
+                        <p className="font-bold text-[40px]">${overviewData[0].money}</p>
                         <div className="flex">
-                            <p className="text-green-700">5.39%</p><span className="text-gray-600">period of change</span>
+                            <p className="text-green-700">{overviewData[0].change}%</p><span className="text-gray-600">period of change</span>
                         </div>
                     </div>
                     <button className="border-1 border-pink-600 p-1 rounded-md"><CiShoppingCart size={30}/></button>
@@ -31,9 +43,9 @@ const Dashboard=()=>{
                 <div className="flex justify-between items-start p-3 rounded-md bg-blue-300 min-w-[30%]">
                     <div className="flex flex-col gap-4 items-start justify-start">
                         <p className="font-bold">Profit</p>
-                        <p className="font-bold text-[40px]">$32,218</p>
+                        <p className="font-bold text-[40px]">${overviewData[1].money}</p>
                         <div className="flex">
-                            <p className="text-green-700">5.39%</p><span className="text-gray-600">period of change</span>
+                            <p className="text-green-700">{overviewData[1].change}%</p><span className="text-gray-600">period of change</span>
                         </div>
                     </div>
                     <button className="border-1 border-blue-500 p-1 rounded-md"><FaDollarSign size={30}/></button>
@@ -41,9 +53,9 @@ const Dashboard=()=>{
                 <div className="flex justify-between items-start p-3 rounded-md bg-blue-300 min-w-[30%]">
                     <div className="flex flex-col gap-4 items-start justify-start">
                         <p className="font-bold">New customer</p>
-                        <p className="font-bold text-[40px]">298</p>
+                        <p className="font-bold text-[40px]">${overviewData[2].money}</p>
                         <div className="flex">
-                            <p className="text-green-700">5.39%</p><span className="text-gray-600">period of change</span>
+                            <p className="text-green-700">{overviewData[2].change}%</p><span className="text-gray-600">period of change</span>
                         </div>
                     </div>
                     <button className="border-1 border-blue-500 p-1 rounded-md"><RxAvatar size={30}/></button>
