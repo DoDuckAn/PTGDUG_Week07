@@ -9,6 +9,7 @@ import { Checkbox } from 'primereact/checkbox';
 import { Button } from 'primereact/button';
 import { GoPencil } from 'react-icons/go';
 import version from '../assets/version.png';
+import { EditModal } from './Modal';
 
 const CustomerTable = () => {
     const [data,setData]=useState([])
@@ -20,7 +21,39 @@ const CustomerTable = () => {
         })
         .catch(err=>console.log(err))
     },[])
+    const [isOpenEditModal,setIsOpenEditModal]=useState(false)
+    const [editRowData,setEditRowData]=useState(null)
+    const [id,setId]=useState('')
+    const [name,setName]=useState('')
+    const [company,setCompany]=useState('')
+    const [orderValue,setOrderValue]=useState('')
+    const [orderDate,setOrderDate]=useState('')
+    const [status,setStatus]=useState('')
 
+    const EditHandler=async()=>{
+        fetch(`https://67cd6670dd7651e464ee43e8.mockapi.io/customer/${id}`,{
+            method:'PUT',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({
+                name:name,
+                company:company,
+                orderValue:orderValue,
+                orderDate:orderDate,
+                status:status
+            })
+        })
+        .then(res=>{
+            if(!res.ok)
+                throw new Error('update failed')
+            return res.json()
+        })
+        .then(data=>console.log('update successful:',data))
+        .catch(err=>{
+            console.log('Error: ',err);
+        })
+    }
     // ✅ Avatar + Tên
     const customerTemplate = (rowData) => {
         return (
@@ -59,9 +92,17 @@ const CustomerTable = () => {
     };
 
     // ✅ Nút chỉnh sửa
-    const actionTemplate = () => {
+    const actionTemplate = (rowData) => {
         return (
-            <Button className="p-button-text">
+            <Button className="p-button-text" onClick={()=>{
+                    setIsOpenEditModal(true)
+                    setId(rowData.id)
+                    setName(rowData.name)
+                    setCompany(rowData.company)
+                    setOrderValue(rowData.orderValue)
+                    setOrderDate(rowData.orderDate)
+                    setStatus(rowData.status)
+                }}>
                 <GoPencil size={20} />
             </Button>
         );
@@ -69,6 +110,46 @@ const CustomerTable = () => {
 
     return (
         <div className="card w-full">
+            <EditModal isOpen={isOpenEditModal} onClose={()=>setIsOpenEditModal(false)}>
+                <h2 className="text-xl font-semibold mb-4">Edit</h2>
+                <div className='flex flex-col justify-start items-start gap-4'>
+                    <div className='flex items-center justify-start'>
+                        <p className='w-[300px]'>Customer name</p>
+                        <input type='text' onChange={(e)=>setName(e.target.value)} className='border w-full rounded-lg p-2' value={name}/>
+                    </div>
+                    <div className='flex items-center justify-start'>
+                        <p className='w-[300px]'>Company</p>
+                        <input type='text' onChange={(e)=>setCompany(e.target.value)} className='border w-full rounded-lg p-2' value={company}/>
+                    </div>
+                    <div className='flex items-center justify-start'>
+                        <p className='w-[300px]'>Order value</p>
+                        <input type='text' onChange={(e)=>setOrderValue(e.target.value)} className='border w-full rounded-lg p-2' value={orderValue}/>
+                    </div>
+                    <div className='flex items-center justify-start'>
+                        <p className='w-[300px]'>Order date</p>
+                        <input type='text' onChange={(e)=>setOrderDate(e.target.value)} className='border w-full rounded-lg p-2' value={orderDate}/>
+                    </div>
+                    <div className='flex items-center justify-start'>
+                        <p className='w-[300px]'>Status</p>
+                        <select value={status} onChange={(e)=>setStatus(e.target.value)}>
+                            <option value="New">New</option>
+                            <option value="In progress">In progress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+
+
+                    </div>
+                </div>
+                <button
+                    onClick={() => {
+                        EditHandler()
+                        setIsOpenEditModal(false)         
+                    }}
+                    className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md"
+                >
+                    Save
+                </button>
+            </EditModal>
             <DataTable value={data} tableStyle={{ minWidth: '50rem'}} className='w-full'>
                 <Column style={{ width: '3rem' }} />
                 <Column header="CUSTOMER NAME" body={customerTemplate} />
