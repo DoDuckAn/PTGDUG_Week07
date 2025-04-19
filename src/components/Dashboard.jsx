@@ -7,9 +7,15 @@ import { CiImport } from "react-icons/ci";
 import { CiExport } from "react-icons/ci";
 import { useEffect, useState } from "react";
 import CustomerTable from "./CustomerTable";
+import { EditModal } from "./Modal";
 
 const Dashboard=()=>{
     const [isOpen,setIsOpen]=useState(false)
+    const [name,setName]=useState('')
+    const [company,setCompany]=useState('')
+    const [orderValue,setOrderValue]=useState('')
+    const [orderDate,setOrderDate]=useState('')
+    const [status,setStatus]=useState('')
     const [overviewData,setOverviewData]=useState([{money:null,change:null},{money:null,change:null},{money:null,change:null}])
     useEffect(()=>{
         fetch('https://67fb62ab8ee14a542629e092.mockapi.io/stats')
@@ -21,6 +27,31 @@ const Dashboard=()=>{
             console.log('lỗi khi fetch overview:',err);
         })
     },[])
+
+    const AddHandler=()=>{
+        fetch(`https://67cd6670dd7651e464ee43e8.mockapi.io/customer`,{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({
+                name,
+                company,
+                orderValue,
+                orderDate,
+                status
+            })
+        })
+        .then(res=>{
+            if(!res.ok)
+                throw new Error('Add failed')
+            return res.json()
+        })
+        .then(data=>console.log('Add successful:',data))
+        .catch(err=>{
+            console.log('Error: ',err);
+        })
+    }
 
     return(
         <div className="bg-white flex flex-col items-start justify-start gap-5 p-9 border h-full w-full">
@@ -67,30 +98,46 @@ const Dashboard=()=>{
                 </div>
                 <div className="flex gap-4 justify-center items-center">
                     <button onClick={()=>setIsOpen(true)} className="flex p-2 border-1 border-pink-500 gap-2 rounded-md items-center justify-center">
-                        <CiImport className="text-pink-500" size={30}/>
-                        <span className="text-pink-500">Import</span>
+                        <span className="text-pink-500">+ Add</span>
                     </button>
-                    <button className="flex p-2 border-1 border-pink-500 gap-2 rounded-md items-center justify-center">
-                        <CiExport className="text-pink-500" size={30}/>
-                        <span className="text-pink-500">Export</span>
-                    </button>
-                    {isOpen && (
-                    <div className="fixed inset-0 bg-blue-200 bg-opacity-20 flex items-center justify-center z-50">
-                    {/* Modal content */}
-                    <div className="bg-white p-6 rounded-lg w-[90%] max-w-md">
-                        <h2 className="text-xl font-bold mb-4">Enter order</h2>
-                        <p className="mb-4">content</p>
-
-                        <div className="flex justify-end">
-                        <button
-                            onClick={() => setIsOpen(false)}
-                            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                        >
-                            Đóng
-                        </button>
+                    <EditModal isOpen={isOpen} onClose={()=>setIsOpen(false)}>
+                        <h1>Add</h1>
+                        <div className='flex flex-col justify-start items-start gap-4 mt-3'>
+                            <div className='flex items-center justify-start'>
+                                <p className='w-[300px] text-start'>Customer name</p>
+                                <input type='text' onChange={(e)=>setName(e.target.value)} className='border w-full rounded-lg p-2'/>
+                            </div>
+                            <div className='flex items-center justify-start'>
+                                <p className='w-[300px] text-start'>Company</p>
+                                <input type='text' onChange={(e)=>setCompany(e.target.value)} className='border w-full rounded-lg p-2'/>
+                            </div>
+                            <div className='flex items-center justify-start'>
+                                <p className='w-[300px] text-start'>Order value</p>
+                                <input type='text' onChange={(e)=>setOrderValue(e.target.value)} className='border w-full rounded-lg p-2'/>
+                            </div>
+                            <div className='flex items-center justify-start'>
+                                <p className='w-[300px] text-start'>Order date</p>
+                                <input type='text' onChange={(e)=>setOrderDate(e.target.value)} className='border w-full rounded-lg p-2'/>
+                            </div>
+                            <div className='flex items-center justify-start'>
+                                <p className='w-[300px] text-start'>Status</p>
+                                <select onChange={(e)=>setStatus(e.target.value)} className="border w-full rounded-lg p-2">
+                                    <option value="New">New</option>
+                                    <option value="In progress">In progress</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    </div>)}
+                        <button
+                            onClick={() => {
+                                AddHandler()
+                                setIsOpen(false)         
+                            }}
+                            className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md"
+                        >
+                            Add
+                        </button>
+                    </EditModal>
                 </div>
             </div>
             <div className="flex flex-col justify-start items-start w-[100%]">
