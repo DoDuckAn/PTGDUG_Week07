@@ -1,16 +1,26 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-import Dashboard from './components/Dashboard'
 import Layout from './components/Layout'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Dashboard from './components/Dashboard';
+import Projects from './components/Projects';
+import Teams from './components/Teams';
+
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-      <Layout/>
+      <Router>
+        <Routes>
+          <Route path='/' element={<Layout/>}>
+            <Route index element={<Dashboard/>}/>
+            <Route path='projects' element={<Projects/>}/>
+            <Route path='teams' element={<Teams/>}/>
+          </Route>
+        </Routes>
+      </Router>
     </>
   )
 }
